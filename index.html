@@ -148,18 +148,16 @@ p {
 <div class="overlay"></div>
 
 <div id="container">
-    <!-- Logo del servidor -->
     <img id="server-logo" src="images/logo_a.png" alt="Logo Servidor">
     <div id="logo-subtext">¡El mejor servidor de rol y diversión!</div>
 
     <h1>Bienvenido al servidor</h1>
-    <p>Descargando contenido del servidor...</p>
+    <p id="loading-status">Descargando contenido del servidor...</p>
 
     <div class="loadingbar">
         <div class="bar"></div>
     </div>
 
-    <!-- Equipo -->
     <div class="team">
         <div class="member">
             <img src="images/team/person1.jpg" alt="Miembro 1">
@@ -176,9 +174,45 @@ p {
             <div class="member-name">Carlos</div>
             <div class="member-role">Administrador</div>
         </div>
-        <!-- Añade más miembros según necesites -->
     </div>
 </div>
+
+<div id="audio-player" style="position:absolute; top:-9999px; left:-9999px;"></div>
+
+<script>
+// 1. Cargar la API de YouTube de forma asíncrona
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+// 2. Configurar el reproductor cuando la API esté lista
+var player;
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('audio-player', {
+        height: '0',
+        width: '0',
+        videoId: 'dQw4w9WgXcQ', // <--- REEMPLAZA ESTO por el ID de tu video de YouTube
+        playerVars: {
+            'autoplay': 1,
+            'loop': 1,
+            'playlist': 'dQw4w9WgXcQ', // <--- REEMPLAZA ESTO por el mismo ID (obligatorio para el bucle)
+            'controls': 0,
+            'showinfo': 0,
+            'rel': 0
+        },
+        events: {
+            'onReady': onPlayerReady
+        }
+    });
+}
+
+// 3. Controlar el volumen al arrancar
+function onPlayerReady(event) {
+    event.target.setVolume(40); // Volumen al 40% para no dejar sordos a los jugadores
+    event.target.playVideo();
+}
+</script>
 
 <script>
 // Slideshow de fondos
@@ -207,11 +241,22 @@ function changeBackground() {
     }
 }
 
-// Imagen inicial
 bgElement.src = backgrounds[index];
-
-// Cambiar cada 2 segundos
 setInterval(changeBackground, 8000);
+
+// INTEGRACIÓN CON GARRY'S MOD: Muestra qué archivo real se está bajando
+function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+    document.getElementById("loading-status").innerHTML = "Conectando a: " + servername + "<br>Cargando mapa: " + mapname;
+}
+
+function SetFilesNeeded(needed) {
+    // Función nativa opcional de GMod
+}
+
+function SetStatusChanged(status) {
+    // Actualiza dinámicamente el texto según lo que hace el juego (ej. "Workshop Complete", "Sending client info...")
+    document.getElementById("loading-status").innerText = status;
+}
 </script>
 
 </body>
