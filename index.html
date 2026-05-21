@@ -177,42 +177,9 @@ p {
     </div>
 </div>
 
-<div id="audio-player" style="position:absolute; top:-9999px; left:-9999px;"></div>
-
-<script>
-// 1. Cargar la API de YouTube de forma asíncrona
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-// 2. Configurar el reproductor cuando la API esté lista
-var player;
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('audio-player', {
-        height: '0',
-        width: '0',
-        videoId: 'ePzBRKkpjh4', // <--- REEMPLAZA ESTO por el ID de tu video de YouTube
-        playerVars: {
-            'autoplay': 1,
-            'loop': 1,
-            'playlist': 'ePzBRKkpjh4', // <--- REEMPLAZA ESTO por el mismo ID (obligatorio para el bucle)
-            'controls': 0,
-            'showinfo': 0,
-            'rel': 0
-        },
-        events: {
-            'onReady': onPlayerReady
-        }
-    });
-}
-
-// 3. Controlar el volumen al arrancar
-function onPlayerReady(event) {
-    event.target.setVolume(40); // Volumen al 40% para no dejar sordos a los jugadores
-    event.target.playVideo();
-}
-</script>
+<audio id="ambient-loop" autoplay loop>
+    <source src="stalker.ogg" type="audio/ogg">
+</audio>
 
 <script>
 // Slideshow de fondos
@@ -244,6 +211,18 @@ function changeBackground() {
 bgElement.src = backgrounds[index];
 setInterval(changeBackground, 8000);
 
+// Forzar la reproducción del archivo .ogg en el motor de Garry's Mod
+window.addEventListener("DOMContentLoaded", () => {
+    const audio = document.getElementById("ambient-loop");
+    
+    // Volumen al 35% (puedes variarlo de 0.0 a 1.0)
+    audio.volume = 0.35; 
+    
+    audio.play().catch(e => {
+        console.log("Esperando interacción o carga para activar el sonido.");
+    });
+});
+
 // INTEGRACIÓN CON GARRY'S MOD: Muestra qué archivo real se está bajando
 function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
     document.getElementById("loading-status").innerHTML = "Conectando a: " + servername + "<br>Cargando mapa: " + mapname;
@@ -254,7 +233,7 @@ function SetFilesNeeded(needed) {
 }
 
 function SetStatusChanged(status) {
-    // Actualiza dinámicamente el texto según lo que hace el juego (ej. "Workshop Complete", "Sending client info...")
+    // Actualiza dinámicamente el texto según lo que hace el juego
     document.getElementById("loading-status").innerText = status;
 }
 </script>
